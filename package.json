@@ -1,0 +1,12 @@
+{
+  "name": "ambiancechanger",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "KFBF",
+  "license": "MIT",
+  "dependencies": {
+    "firebase-admin": "^9.8.0",
+    "serialport": "^9.0.7",
+    "xbee-api": "^0.6.0"
+  }
+}
