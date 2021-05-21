@@ -22,3 +22,13 @@ module.exports.watcher = async function (fn){
     })
 
 }
+
+module.exports.updater = async function(id){
+    const docRef = db.collection('/rooms/1/lights');
+
+    let docs = await docRef.get();
+    docs.docs.forEach((d) => {
+        const doc = d.data();
+        d.ref.update({active : (d.data().id === id)});    
+    })
+}

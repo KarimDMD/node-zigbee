@@ -59,7 +59,7 @@ fs.watcher(openLightThemeColor);
 
 // All frames parsed by the XBee will be emitted here
 xbeeAPI.parser.on("data", function(frame) {
-    if (frame.type == C.FRAME_TYPE.REMOTE_COMMAND_RESPONSE) {
+    if (frame.type == C.FRAME_TYPE.ZIGBEE_IO_DATA_SAMPLE_RX) {
         if(frame.digitalSamples.DIO0 ==  1){
             //TODO: ecrire sur FS couleur bleu, active à true, mettre les autres à false
             frame_obj = { // AT Request to be sent
@@ -70,6 +70,7 @@ xbeeAPI.parser.on("data", function(frame) {
               };
 
             xbeeAPI.builder.write(frame_obj);
+            fs.updater(0);
             console.log(frame.digitalSamples);
         }else if(frame.digitalSamples.DIO1 ==  1){
             //TODO: ecrire sur FS couleur vert, active à true, mettre les autres à false
@@ -81,6 +82,7 @@ xbeeAPI.parser.on("data", function(frame) {
               };
 
             xbeeAPI.builder.write(frame_obj);
+            fs.updater(1);
             console.log(frame.digitalSamples);
         }else if(frame.digitalSamples.DIO2 ==  1){
             //TODO: ecrire sur FS couleur green, active à true, mettre les autres à false
@@ -91,6 +93,7 @@ xbeeAPI.parser.on("data", function(frame) {
                 commandParameter: [0x04],
               };
             xbeeAPI.builder.write(frame_obj);
+            fs.updater(2);
             console.log(frame.digitalSamples);
         }
     }
