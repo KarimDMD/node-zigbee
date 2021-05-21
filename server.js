@@ -1,6 +1,7 @@
 var SerialPort = require('serialport');
 var xbee_api = require('xbee-api');
 var C = xbee_api.constants;
+var fs = require("./firestore");
  
 var xbeeAPI = new xbee_api.XBeeAPI({
   api_mode: 1
@@ -32,17 +33,33 @@ serialport.on("open", function() {
   xbeeAPI.builder.write(frame_obj);
 });
 
-// const colortest = {
-//     id: 0,
-//     color: 
-// }
+const openLightThemeColor = (cmd) => {
+  frame_obj = { // AT Request to be sent
+    type: C.FRAME_TYPE.REMOTE_AT_COMMAND_REQUEST,
+    destination16: "db62",
+    command: cmd,
+    commandParameter: [0x04],
+  };
+  console.log('fn :', cmd)
+  xbeeAPI.builder.write(frame_obj); 
+};
+
+const closeLightThemeColor = (cmd) => {
+  frame_obj = { // AT Request to be sent
+    type: C.FRAME_TYPE.REMOTE_AT_COMMAND_REQUEST,
+    destination16: "DB62",
+    command: cmd,
+    commandParameter: [0x00],
+  };
+
+  xbeeAPI.builder.write(frame_obj); 
+};
+
+fs.watcher(openLightThemeColor);
 
 // All frames parsed by the XBee will be emitted here
 xbeeAPI.parser.on("data", function(frame) {
-
-  
-
-    if (frame.type == C.FRAME_TYPE.ZIGBEE_IO_DATA_SAMPLE_RX) {
+    if (frame.type == C.FRAME_TYPE.REMOTE_COMMAND_RESPONSE) {
         if(frame.digitalSamples.DIO0 ==  1){
             //TODO: ecrire sur FS couleur bleu, active à true, mettre les autres à false
             frame_obj = { // AT Request to be sent
@@ -76,27 +93,27 @@ xbeeAPI.parser.on("data", function(frame) {
             xbeeAPI.builder.write(frame_obj);
             console.log(frame.digitalSamples);
         }
-
-       // 0013A20041A72910 /DB62
-
-      
-
-      
-
-      
-      
-      
-
     }
-    if (frame.type == C.FRAME_TYPE.REMOTE_COMMAND_RESPONSE) {
-        console.log("REMOTE_COMMAND_RESPONSE");
+  }
+)
+//        // 0013A20041A72910 /DB62
 
-        let dataReceived = String.fromCharCode.apply(null, frame.commandData)
-    console.log(dataReceived);
+      
 
-    }
-    else{
-        console.log(frame);
-    }
-    // console.log(">>", frame);
-});
+      
+
+      
+      
+      
+
+//     }
+//     if (frame.type == C.FRAME_TYPE.REMOTE_COMMAND_RESPONSE) {
+//         console.log("REMOTE_COMMAND_RESPONSE");
+//         let dataReceived = String.fromCharCode.apply(null, frame.commandData)
+//         console.log(dataReceived);
+
+//     }
+//     else{
+//         console.log(frame);
+//     }
+// });
